@@ -1,7 +1,7 @@
 import re
 import zipfile
 
-regex = r"Next nothing is \d+"
+regex = r"Next nothing is (\d+)"
 non_matching_files = []
 
 with zipfile.ZipFile("channel.zip", 'r') as zip_ref:
@@ -14,11 +14,17 @@ with zipfile.ZipFile("channel.zip", 'r') as zip_ref:
                 non_matching_files.append(content)
     
 
-print(non_matching_files)
-
 
 with zipfile.ZipFile("channel.zip", "r") as zip_ref:
-    for file_info in zip_ref.infolist():
-        file_comment = file_info.comment.decode('utf-8')
-        if file_comment and file_comment[0].isalpha():
-            print(file_comment)
+    first_file = zip_ref.read("90052.txt").decode('utf-8')
+    match = re.search(regex, first_file).group(1)
+
+    while True:
+        file = zip_ref.read(f"{match}.txt").decode('utf-8')
+        match = re.search(regex, file)
+        if match:
+            match = match.group(1)
+            comment = zip_ref.getinfo(f"{match}.txt").comment.decode('utf-8')
+            print(comment, end="")
+        else:
+            break
