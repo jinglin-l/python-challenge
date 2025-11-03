@@ -2,11 +2,19 @@ from PIL import Image
 import requests 
 from io import BytesIO
 
+# ok, i see a photo with a very suspicious strip of gray pixels. how can we possibly turn photo data into string data?
+
+# oooh fun, google tells me pillow is a excellent library for image processing.
+# https://pillow.readthedocs.io/en/stable/handbook/overview.html
+
+# let's try to open the image and get the pixels
+
 # response.content is type bytes
 response = requests.get("http://www.pythonchallenge.com/pc/def/oxygen.png")
 
+# use BytesIO to convert the bytes to an image object
 image = Image.open(BytesIO(response.content))
-pixels = list(image.getdata())
+print("image type: ", type(image))
 # print("pixels type: ", type(pixels))
 # print("pixels: ", pixels)
 
@@ -23,8 +31,8 @@ print("end_idx: ", end_idx)
 
 middle_row_pixels = pixels[start_idx:end_idx]
 
-print("middle_row_pixels: ", middle_row_pixels)
-# seems like each sqaure in the photo is 7 pixels wide
+# print("middle_row_pixels: ", middle_row_pixels)
+# seems like each sqaure in the photo is 7 pixels wide from counting the number of repeated pixels
 
 message = ""
 for index, pixel in enumerate(middle_row_pixels):
